@@ -1,0 +1,12 @@
+services:
+  # .devcontainer/devcontainer.json の service で指定した名前と同じにする必要があります
+  your-service-name-here:
+    # VS Code の Developing inside a Container を使うためには、
+    # デフォルトのコンテナコマンドが失敗したり終了したりして
+    # コンテナがシャットダウンしないようにする必要があります
+    # そのため、コンテナーの起動時に実行される ENTRYPOINT を消去して、デフォルトのコマンドを上書きします
+    # 参考:
+    # - Create a Dev Container
+    #   https://code.visualstudio.com/docs/devcontainers/create-dev-container#_use-docker-compose
+    entrypoint: []
+    command: sleep infinity

@@ -1,0 +1,40 @@
+services:
+  # .devcontainer/devcontainer.json の service で指定した名前と同じにする必要があります
+  your-service-name-here:
+    # 開発環境として起動するコンテナーを Dockerfile をビルドして作成するようにするため
+    build: .
+    volumes:
+      # .devcontainer/devcontainer.json の workspaceFolder で
+      # 設定するディレクトリーと同じディレクトリーに
+      # compose.yml が配置されているディレクトリーをマウントします
+      # これにより、Developing inside a Container で開かられる VS Code で
+      # compose.yml が配置されているディレクトリーのファイルが開けるようになります
+      # 公式のテンプレートではホスト側の更新を優先するよう
+      # .:/workspace:cached となっていますが、意図は不明です:
+      # - Use cached consistency in bind mounts · microsoft/vscode-dev-containers@5b6371c
+      #   https://github.com/microsoft/vscode-dev-containers/commit/5b6371c0daf9e8e1e263eee45ef1fbbbf5aa66b8
+      - .:/workspace
+      # Docker イメージのビルド時に作成される仮想環境をマウントします
+      # この設定がないと、Docker イメージのビルド時に作成される仮想環境が
+      # 上で設定されているマウントによって消えてしまい、次の問題が発生します:
+      # - VS Code で Reopen in Container した後に再度 uv sync する必要があります
+      # - 仮想環境のディレクトリー: .venv がホスト側に作成され残ってしまいます
+      # - パフォーマンスが低下します
+      # 参考:
+      # - node_modules/ and Docker volume mount 問題と対策 - castaneaiのブログ
+      #   https://castaneai.hatenablog.com/entry/2019/01/29/151257
+      # - Answer: node.js - Docker-compose: node_modules not present in a volume after npm install succeeds - Stack Overflow
+      #   https://stackoverflow.com/a/32785014/12721873
+      # - Improve disk performance
+      #   https://code.visualstudio.com/remote/advancedcontainers/improve-performance#_use-a-targeted-named-volume
+      - /workspace/.venv
+      # uv が依存関係 Python パッケージをインストールするための
+      # キャッシュディレクトリーを Docker の volume にキャッシュしておきます
+      # これにより、uv sync の実行時に依存関係 Python パッケージのダウンロードが
+      # Docker の volume にキャッシュされるので、uv sync の高速化が期待できます
+      # uv 公式が推奨する方法です:
+      # - Using uv in Docker | uv
+      #   https://docs.astral.sh/uv/guides/integration/docker/#caching
+      - uv-cache:/root/.cache/uv
+volumes:
+  uv-cache:

@@ -1,0 +1,33 @@
+{
+  // name は何でも構いません
+  "name": "Existing Docker Compose (Extend)",
+  // root ディレクトリーの compose.yml から読み込むように、次の順に設定します
+  // - compose.yml 内の設定で使われている相対パスは
+  //   最初に読み込んだ compose.yml が基準となるため
+  // - 後に読み込んだ compose.yml の設定が先に読み込んだ設定を上書きするため
+  "dockerComposeFile": [
+    "../compose.yml",
+    "./compose.yml"
+  ],
+  "service": "your-service-name-here",
+  // [Add dev container configuration files...] を選択すると追加される
+  // devcontainer.json のテンプレートでは
+  // `/workspaces/${localWorkspaceFolderBasename}` となっていますが、
+  // clone repository in container volume 方式の
+  // Developing inside a Container を行わない限り
+  // 次の設定で問題ありません:
+  // - VS Code + Docker Desktop デフォルトが親ディレクトリーをマウントする設定の理由
+  //   https://zenn.dev/y_shinoda/articles/reasons-why-parent-folder-is-mounted-by-default
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        // ベストプラクティスの変化が激しいため省略
+        "ms-python.python"
+      ],
+      "settings": {
+        // ベストプラクティスの変化が激しいため省略
+      }
+    }
+  }
+}
